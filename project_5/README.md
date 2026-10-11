@@ -1,6 +1,9 @@
 # project_5
+RSVP pizza party app that tracks what toppings the guests want.
 
-A new Flutter project.
+## Sources
+https://firebase.google.com/docs/firestore/data-model 
+https://dev.to/mukhtharcm/update-firestore-document-flutter-im0 This is how I kept the 'attending' and 'topping' fields inside each attendee.
 
 ## Getting Started
 
