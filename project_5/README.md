@@ -15,3 +15,9 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+https://www.youtube.com/watch?v=xjPHI4kBcwQ 
+https://api.flutter.dev/flutter/widgets/Table-class.html 
+https://stackoverflow.com/questions/71408490/what-does-too-many-positional-argument-mean-in-flutter 
+https://stackoverflow.com/questions/68043275/printing-int-value-in-text-widget-flutter 
+

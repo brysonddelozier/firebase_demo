@@ -9,6 +9,7 @@ import 'firebase_options.dart';
 import 'guest_book_message.dart';
 
 enum Attending { yes, no, unknown }
+enum Topping { pepperoni, sausage, veggies, unknown }
 
 class ApplicationState extends ChangeNotifier {
   ApplicationState() {
@@ -26,6 +27,10 @@ class ApplicationState extends ChangeNotifier {
   int _attendees = 0;
   int get attendees => _attendees;
 
+  int numPepperoni = 0;
+  int numSausage = 0;
+  int numVeggies = 0;
+
   Attending _attending = Attending.unknown;
   StreamSubscription<DocumentSnapshot>? _attendingSubscription;
   Attending get attending => _attending;
@@ -34,9 +39,44 @@ class ApplicationState extends ChangeNotifier {
         .collection('attendees')
         .doc(FirebaseAuth.instance.currentUser!.uid);
     if (attending == Attending.yes) {
-      userDoc.set(<String, dynamic>{'attending': true});
+      userDoc.set(
+        <String, dynamic>{'attending': true},
+        SetOptions(merge: true),
+      );
     } else {
-      userDoc.set(<String, dynamic>{'attending': false});
+      userDoc.set(
+        <String, dynamic>{'attending': false},
+        SetOptions(merge: true),
+      );
+      userDoc.set(
+        <String, dynamic>{'topping': Topping.unknown.toString()},
+        SetOptions(merge: true),
+      );
+    }
+  }
+
+  Topping _topping = Topping.unknown;
+  StreamSubscription<DocumentSnapshot>? _toppingSubscription;
+  Topping get topping => _topping;
+  set topping(Topping topping) {
+    final userDoc = FirebaseFirestore.instance
+        .collection('attendees')
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+    if (topping == Topping.pepperoni) {
+      userDoc.set(
+        <String, String>{'topping': Topping.pepperoni.toString()},
+        SetOptions(merge: true),
+      );
+    } else if (topping == Topping.sausage) {
+      userDoc.set(
+        <String, String>{'topping': Topping.sausage.toString()},
+        SetOptions(merge: true),
+      );
+    } else if (topping == Topping.veggies) {
+      userDoc.set(
+        <String, String>{'topping': Topping.veggies.toString()},
+        SetOptions(merge: true),
+      );
     }
   }
 
@@ -93,12 +133,42 @@ class ApplicationState extends ChangeNotifier {
           }
           notifyListeners();
         });
+        _toppingSubscription = FirebaseFirestore.instance
+            .collection('attendees')
+            .doc(user.uid)
+            .snapshots()
+            .listen((snapshot) {
+              int snapPep = 0;
+              int snapSau = 0;
+              int snapVeg = 0;
+          if (snapshot.data() != null) {
+            if (snapshot.data()!['topping'] == 'Topping.pepperoni') {
+              _topping = Topping.pepperoni;
+              snapPep += 1;
+            } else if (snapshot.data()!['topping'] == 'Topping.sausage') {
+              _topping = Topping.sausage;
+              snapSau += 1;
+            } else if (snapshot.data()!['topping'] == 'Topping.veggies') {
+              _topping = Topping.veggies;
+              snapVeg += 1;
+            } else {
+              _topping = Topping.unknown;
+            }
+          } else {
+            _topping = Topping.unknown;
+          }
+          notifyListeners();
+          numPepperoni = snapPep;
+          numSausage = snapSau;
+          numVeggies = snapVeg;
+        });
       } else {
         _loggedIn = false;
         _emailVerified = false;
         _guestBookMessages = [];
         _guestBookSubscription?.cancel();
         _attendingSubscription?.cancel();
+        _toppingSubscription?.cancel();
       }
       notifyListeners();
     });

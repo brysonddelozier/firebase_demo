@@ -7,6 +7,8 @@ import 'app_state.dart';
 import 'guest_book.dart';                          
 import 'src/authentication.dart';                 
 import 'src/widgets.dart';
+import 'topping_selection.dart';
+import 'topping_table.dart';
 import 'yes_no_selection.dart';
 
 class HomePage extends StatelessWidget {
@@ -58,6 +60,17 @@ class HomePage extends StatelessWidget {
                     addMessage: (message) =>
                         appState.addMessageToGuestBook(message),
                     messages: appState.guestBookMessages,
+                  ),
+                  const Header('Select a Topping'),
+                  ToppingSelection(
+                    state: appState.topping,
+                    onSelection: (topping) => appState.topping = topping,
+                  ),
+                  const Header('Topping Selection Tally'),
+                  ToppingTable(
+                    numPepperoni: appState.numPepperoni,
+                    numSausage: appState.numSausage,
+                    numVeggies: appState.numVeggies,
                   ),
                 ],
               ],
